@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ProductCard from "@/components/ProductCard";
@@ -11,6 +11,24 @@ import { ArrowLeft } from "lucide-react";
 const AllProducts = () => {
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Listen for cart events from product detail pages
+  useEffect(() => {
+    const handleAddToCart = (event: CustomEvent) => {
+      const { product } = event.detail;
+      setSelectedProducts(prev => {
+        if (prev.find(p => p.id === product.id)) {
+          return prev;
+        }
+        return [...prev, product];
+      });
+    };
+
+    window.addEventListener('addToCart', handleAddToCart as EventListener);
+    return () => {
+      window.removeEventListener('addToCart', handleAddToCart as EventListener);
+    };
+  }, []);
 
   const handleAddToCart = (product: Product) => {
     setSelectedProducts(prev => {

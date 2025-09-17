@@ -16,10 +16,13 @@ const ProductDetail = () => {
   const product = products.find(p => p.slug === slug);
 
   useEffect(() => {
+    // Scroll to top when component loads
+    window.scrollTo(0, 0);
+    
     if (!product) {
       navigate('/');
     }
-  }, [product, navigate]);
+  }, [product, navigate, slug]);
 
   if (!product) {
     return null;
@@ -42,8 +45,15 @@ const ProductDetail = () => {
       alert('Ova boja trenutno nije dostupna.');
       return;
     }
-    // This would integrate with your cart system
-    console.log('Adding to cart:', product, currentColor);
+    
+    // Create a cart event that the parent can listen to
+    const cartEvent = new CustomEvent('addToCart', {
+      detail: { product, color: currentColor }
+    });
+    window.dispatchEvent(cartEvent);
+    
+    // Show success message
+    alert(`${product.name} je dodat u korpu!`);
   };
 
   return (
@@ -129,22 +139,20 @@ const ProductDetail = () => {
                   {product.colors.map((color, index) => (
                     <button
                       key={index}
-                      onClick={() => handleColorChange(index)}
+                      onClick={() => color.available && handleColorChange(index)}
                       disabled={!color.available}
-                      className={`px-4 py-2 rounded-lg border transition-colors relative ${
+                      title={!color.available ? 'Nedostupno' : ''}
+                      className={`px-4 py-2 rounded-lg border transition-colors ${
                         selectedColor === index
                           ? 'border-primary bg-primary text-primary-foreground'
                           : 'border-border bg-background hover:border-accent'
                       } ${
-                        !color.available ? 'opacity-50 cursor-not-allowed' : ''
+                        !color.available 
+                          ? 'opacity-40 cursor-not-allowed grayscale hover:border-border' 
+                          : 'hover:shadow-sm'
                       }`}
                     >
                       {color.name}
-                      {!color.available && (
-                        <span className="absolute top-0 right-0 text-xs text-muted-foreground">
-                          (nedostupno)
-                        </span>
-                      )}
                     </button>
                   ))}
                 </div>

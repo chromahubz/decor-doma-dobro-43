@@ -155,7 +155,7 @@ export const products: Product[] = [
     name: "Hidroponik Tower",
     slug: "hidroponik-tower",
     price: 8900,
-    mainImage: hydroponic1,
+    mainImage: hydroponic3,
     description: "Moderni hidroponski toranj za gajenje biljaka bez zemlje.",
     longDescription: "Revolucionarni pristup gajenju biljaka u zatvorenom prostoru. Ovaj hidroponski toranj omogućava gajenje svežeg povrća i začina direktno u vašoj kuhinji ili dnevnoj sobi. Sistem automatski kontroliše hranjenje biljaka kroz vodeni rastvor bogat hranjivim materijama. Kompaktan dizajn čini ga idealnim za male prostore, dok moderna estetika čini da se savršeno uklopi u bilo koji savremeni enterijer.",
     colors: [
@@ -251,7 +251,7 @@ export const products: Product[] = [
     name: "Držač Za Ranac",
     slug: "drzac-za-ranac",
     price: 2400,
-    mainImage: baghook1,
+    mainImage: baghook3,
     description: "Elegantni zidni držač za rančeve i torbe sa modernim dizajnom.",
     longDescription: "Funkcionalni i estetski držač za rančeve koji rešava problem organizacije ulaznog prostora. Dizajniran je da podnese značajan teret dok zadržava elegantan izgled. Moderna linija čini ga pogodnim za bilo koji enterijer - od industrijskih do skandinavskih stilova. Lako se montira na zid i dolazi sa svim potrebnim elementima za instalaciju.",
     colors: [
