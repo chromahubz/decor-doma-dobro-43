@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Earth-toned botanical design system */
+    --background: 45 15% 97%;
+    --foreground: 25 12% 15%;
+
+    --card: 45 20% 98%;
+    --card-foreground: 25 12% 15%;
+
+    --popover: 45 20% 98%;
+    --popover-foreground: 25 12% 15%;
+
+    /* Sage green primary */
+    --primary: 95 20% 45%;
+    --primary-foreground: 45 20% 98%;
+
+    /* Warm earth secondary */
+    --secondary: 35 25% 85%;
+    --secondary-foreground: 25 15% 25%;
+
+    --muted: 40 15% 92%;
+    --muted-foreground: 25 8% 50%;
+
+    /* Terracotta accent */
+    --accent: 15 55% 70%;
+    --accent-foreground: 45 20% 98%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 45 20% 98%;
+
+    --border: 35 15% 88%;
+    --input: 35 15% 88%;
+    --ring: 95 20% 45%;
+
+    --radius: 0.75rem;
+
+    /* Hero gradient */
+    --gradient-hero: linear-gradient(135deg, hsl(95 20% 45%), hsl(85 25% 55%));
+    
+    /* Card shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(25 12% 15% / 0.1);
+    --shadow-hover: 0 8px 30px -4px hsl(25 12% 15% / 0.15);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 45 15% 97%;
+    --sidebar-foreground: 25 12% 25%;
+    --sidebar-primary: 95 20% 45%;
+    --sidebar-primary-foreground: 45 20% 98%;
+    --sidebar-accent: 35 15% 90%;
+    --sidebar-accent-foreground: 25 12% 25%;
+    --sidebar-border: 35 15% 88%;
+    --sidebar-ring: 95 20% 45%;
+  }
+
+  .dark {
+    /* Dark botanical theme */
+    --background: 25 15% 8%;
+    --foreground: 45 20% 92%;
+
+    --card: 25 15% 10%;
+    --card-foreground: 45 20% 92%;
+
+    --popover: 25 15% 10%;
+    --popover-foreground: 45 20% 92%;
+
+    --primary: 95 25% 55%;
+    --primary-foreground: 25 15% 8%;
+
+    --secondary: 25 12% 18%;
+    --secondary-foreground: 45 20% 85%;
+
+    --muted: 25 10% 15%;
+    --muted-foreground: 45 8% 60%;
+
+    --accent: 15 50% 60%;
+    --accent-foreground: 25 15% 8%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 45 20% 92%;
+
+    --border: 25 12% 18%;
+    --input: 25 12% 18%;
+    --ring: 95 25% 55%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(95 25% 25%), hsl(85 30% 35%));
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+    --shadow-hover: 0 8px 30px -4px hsl(0 0% 0% / 0.4);
+
+    --sidebar-background: 25 15% 8%;
+    --sidebar-foreground: 45 20% 85%;
+    --sidebar-primary: 95 25% 55%;
+    --sidebar-primary-foreground: 25 15% 8%;
+    --sidebar-accent: 25 12% 15%;
+    --sidebar-accent-foreground: 45 20% 85%;
+    --sidebar-border: 25 12% 18%;
+    --sidebar-ring: 95 25% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-noto;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+}
+
+@layer components {
+  /* Scroll animations */
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: var(--transition-smooth);
+  }
+
+  .fade-in-up.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fade-in-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: var(--transition-smooth);
+  }
+
+  .fade-in-left.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scale-in {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: var(--transition-smooth);
+  }
+
+  .scale-in.animate {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Product card hover effects */
+  .product-card {
+    transition: var(--transition-smooth);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  /* Hero gradient background */
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+}
