@@ -5,46 +5,34 @@ import ProductCard from "@/components/ProductCard";
 import CheckoutForm from "@/components/CheckoutForm";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import { products, Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 const AllProducts = () => {
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const { selectedProducts, cartItems, addToCart, removeFromCart, updateQuantity, getTotalQuantity, getTotalPrice } = useCart();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Listen for cart events from product detail pages
   useEffect(() => {
     const handleAddToCart = (event: CustomEvent) => {
       const { product } = event.detail;
-      setSelectedProducts(prev => {
-        if (prev.find(p => p.id === product.id)) {
-          return prev;
-        }
-        return [...prev, product];
-      });
+      addToCart(product);
     };
 
     window.addEventListener('addToCart', handleAddToCart as EventListener);
     return () => {
       window.removeEventListener('addToCart', handleAddToCart as EventListener);
     };
-  }, []);
+  }, [addToCart]);
 
   const handleAddToCart = (product: Product) => {
-    setSelectedProducts(prev => {
-      if (prev.find(p => p.id === product.id)) {
-        return prev;
-      }
-      return [...prev, product];
-    });
+    addToCart(product);
   };
 
-  const handleRemoveFromCart = (productId: number) => {
-    setSelectedProducts(prev => prev.filter(p => p.id !== productId));
-  };
 
   const handleCheckout = () => {
-    if (selectedProducts.length === 0) return;
+    if (cartItems.length === 0) return;
     setIsCheckoutOpen(true);
   };
 
@@ -70,20 +58,39 @@ const AllProducts = () => {
       </header>
 
       {/* Shopping Cart Summary */}
-      {selectedProducts.length > 0 && (
+      {cartItems.length > 0 && (
         <div className="fixed top-4 right-4 z-50">
           <div className="bg-card border border-border rounded-lg p-4 shadow-lg max-w-sm">
-            <h3 className="font-semibold mb-2">Izabrani proizvodi ({selectedProducts.length})</h3>
+            <h3 className="font-semibold mb-2">Izabrani proizvodi ({getTotalQuantity()})</h3>
             <div className="max-h-40 overflow-y-auto space-y-2 mb-4">
-              {selectedProducts.map((product) => (
-                <div key={product.id} className="flex justify-between items-center text-sm">
-                  <span className="truncate flex-1 mr-2">{product.name}</span>
+              {cartItems.map((item) => (
+                <div key={item.product.id} className="flex justify-between items-center text-sm">
+                  <span className="truncate flex-1 mr-2">{item.product.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{product.price.toLocaleString('sr-RS')} RSD</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        -
+                      </Button>
+                      <span className="text-xs w-6 text-center">{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        +
+                      </Button>
+                    </div>
+                    <span className="font-medium">{(item.product.price * item.quantity).toLocaleString('sr-RS')} RSD</span>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleRemoveFromCart(product.id)}
+                      onClick={() => removeFromCart(item.product.id)}
                       className="h-6 w-6 p-0"
                     >
                       ×
@@ -96,7 +103,7 @@ const AllProducts = () => {
               <div className="flex justify-between font-bold">
                 <span>Ukupno:</span>
                 <span className="text-primary">
-                  {selectedProducts.reduce((sum, p) => sum + p.price, 0).toLocaleString('sr-RS')} RSD
+                  {getTotalPrice().toLocaleString('sr-RS')} RSD
                 </span>
               </div>
             </div>

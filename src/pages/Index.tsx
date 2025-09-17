@@ -5,43 +5,34 @@ import ProductCard from "@/components/ProductCard";
 import CheckoutForm from "@/components/CheckoutForm";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import { products, Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
 import { Leaf, Shield, Truck, Heart } from "lucide-react";
 import heroImage from "@/assets/hero-decor.jpg";
 
 const Index = () => {
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const { selectedProducts, cartItems, addToCart, removeFromCart, updateQuantity, getTotalQuantity, getTotalPrice } = useCart();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Listen for cart events from product detail pages
   useEffect(() => {
     const handleAddToCart = (event: CustomEvent) => {
       const { product } = event.detail;
-      setSelectedProducts(prev => {
-        if (prev.find(p => p.id === product.id)) {
-          return prev;
-        }
-        return [...prev, product];
-      });
+      addToCart(product);
     };
 
     window.addEventListener('addToCart', handleAddToCart as EventListener);
     return () => {
       window.removeEventListener('addToCart', handleAddToCart as EventListener);
     };
-  }, []);
+  }, [addToCart]);
 
   const handleAddToCart = (product: Product) => {
-    setSelectedProducts(prev => {
-      if (prev.find(p => p.id === product.id)) {
-        return prev;
-      }
-      return [...prev, product];
-    });
+    addToCart(product);
   };
 
   const handleRemoveFromCart = (productId: number) => {
-    setSelectedProducts(prev => prev.filter(p => p.id !== productId));
+    removeFromCart(productId);
   };
 
   const handleCheckout = () => {
@@ -63,7 +54,7 @@ const Index = () => {
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <ScrollAnimation animationType="fade-up">
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              Zeleni Dom
+              Dekor Kuća
             </h1>
           </ScrollAnimation>
           
@@ -116,8 +107,8 @@ const Index = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Leaf className="w-8 h-8 text-primary" />
                 </div>
-                <h4 className="font-semibold text-lg mb-2">Prirodni Materijali</h4>
-                <p className="text-muted-foreground">Koristimo samo najbolje prirodne materijale za dugotrajnost i kvalitet.</p>
+                <h4 className="font-semibold text-lg mb-2">Dekorativni Dizajn</h4>
+                <p className="text-muted-foreground">Svaki proizvod je dizajniran da ulepša vaš dom sa stilom i elegancijom.</p>
               </div>
             </ScrollAnimation>
             
@@ -126,8 +117,8 @@ const Index = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-8 h-8 text-primary" />
                 </div>
-                <h4 className="font-semibold text-lg mb-2">Garancija Kvaliteta</h4>
-                <p className="text-muted-foreground">Svi proizvodi prolaze rigoroznu kontrolu kvaliteta pre isporuke.</p>
+                <h4 className="font-semibold text-lg mb-2">Moderan Stil</h4>
+                <p className="text-muted-foreground">Naši proizvodi prate najnovije trendove u dekoraciji interijera.</p>
               </div>
             </ScrollAnimation>
             
@@ -136,8 +127,8 @@ const Index = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Truck className="w-8 h-8 text-primary" />
                 </div>
-                <h4 className="font-semibold text-lg mb-2">Brza Dostava</h4>
-                <p className="text-muted-foreground">Garantujemo brzu i sigurnu dostavu direktno na vašu adresu.</p>
+                <h4 className="font-semibold text-lg mb-2">Povoljne Cene</h4>
+                <p className="text-muted-foreground">Kvalitetni dekorativni proizvodi po pristupačnim cenama za svaki budžet.</p>
               </div>
             </ScrollAnimation>
             
@@ -146,8 +137,8 @@ const Index = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Heart className="w-8 h-8 text-primary" />
                 </div>
-                <h4 className="font-semibold text-lg mb-2">Ručno Pravljeno</h4>
-                <p className="text-muted-foreground">Svaki proizvod je jedinstveno ručno izrađen sa pažnjom prema detaljima.</p>
+                <h4 className="font-semibold text-lg mb-2">Širok Izbor</h4>
+                <p className="text-muted-foreground">Bogata kolekcija vaza, figurina i dekorativnih predmeta za svaki ukus.</p>
               </div>
             </ScrollAnimation>
           </div>
@@ -155,20 +146,39 @@ const Index = () => {
       </section>
 
       {/* Shopping Cart Summary */}
-      {selectedProducts.length > 0 && (
+      {cartItems.length > 0 && (
         <div className="fixed top-4 right-4 z-50">
           <div className="bg-card border border-border rounded-lg p-4 shadow-lg max-w-sm">
-            <h3 className="font-semibold mb-2">Izabrani proizvodi ({selectedProducts.length})</h3>
+            <h3 className="font-semibold mb-2">Izabrani proizvodi ({getTotalQuantity()})</h3>
             <div className="max-h-40 overflow-y-auto space-y-2 mb-4">
-              {selectedProducts.map((product) => (
-                <div key={product.id} className="flex justify-between items-center text-sm">
-                  <span className="truncate flex-1 mr-2">{product.name}</span>
+              {cartItems.map((item) => (
+                <div key={item.product.id} className="flex justify-between items-center text-sm">
+                  <span className="truncate flex-1 mr-2">{item.product.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{product.price.toLocaleString('sr-RS')} RSD</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        -
+                      </Button>
+                      <span className="text-xs w-6 text-center">{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        +
+                      </Button>
+                    </div>
+                    <span className="font-medium">{(item.product.price * item.quantity).toLocaleString('sr-RS')} RSD</span>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleRemoveFromCart(product.id)}
+                      onClick={() => removeFromCart(item.product.id)}
                       className="h-6 w-6 p-0"
                     >
                       ×
@@ -181,7 +191,7 @@ const Index = () => {
               <div className="flex justify-between font-bold">
                 <span>Ukupno:</span>
                 <span className="text-primary">
-                  {selectedProducts.reduce((sum, p) => sum + p.price, 0).toLocaleString('sr-RS')} RSD
+                  {getTotalPrice().toLocaleString('sr-RS')} RSD
                 </span>
               </div>
             </div>
@@ -264,14 +274,14 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-foreground text-background py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-bold mb-4">Zeleni Dom</h3>
+          <h3 className="text-2xl font-bold mb-4">Dekor Kuća</h3>
           <p className="text-lg mb-6">
             Dekoracija koja donosi prirodu u vaš dom
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
             <div>
               <h4 className="font-semibold mb-2">Kontakt</h4>
-              <p>Email: info@zelenidom.rs</p>
+              <p>Email: info@dekorkuca.com</p>
               <p>Telefon: +381 11 123 4567</p>
             </div>
             <div>

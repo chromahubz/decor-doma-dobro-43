@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
 
 interface CheckoutFormProps {
   selectedProducts: Product[];
@@ -14,6 +15,7 @@ interface CheckoutFormProps {
 }
 
 const CheckoutForm = ({ selectedProducts, onClose }: CheckoutFormProps) => {
+  const { cartItems, getTotalPrice, clearCart } = useCart();
   const [formData, setFormData] = useState({
     ime: '',
     prezime: '',
@@ -28,11 +30,21 @@ const CheckoutForm = ({ selectedProducts, onClose }: CheckoutFormProps) => {
   
   const { toast } = useToast();
 
-  const ukupno = selectedProducts.reduce((sum, product) => sum + product.price, 0);
+  const ukupno = getTotalPrice();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate cart not empty
+    if (cartItems.length === 0) {
+      toast({
+        title: "Greška",
+        description: "Vaša korpa je prazna.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // Validate required fields
     if (!formData.ime || !formData.prezime || !formData.telefon || !formData.adresa) {
       toast({
@@ -48,7 +60,9 @@ const CheckoutForm = ({ selectedProducts, onClose }: CheckoutFormProps) => {
       title: "Porudžbina uspešno poslata!",
       description: `Vaša porudžbina u vrednosti od ${ukupno.toLocaleString('sr-RS')} RSD je uspešno primljena.`,
     });
-    
+
+    // Clear cart after successful order
+    clearCart();
     onClose();
   };
 
@@ -71,10 +85,13 @@ const CheckoutForm = ({ selectedProducts, onClose }: CheckoutFormProps) => {
           {/* Order Summary */}
           <div className="mb-6 p-4 bg-secondary rounded-lg">
             <h3 className="font-semibold mb-3">Pregled porudžbine:</h3>
-            {selectedProducts.map((product) => (
-              <div key={product.id} className="flex justify-between items-center mb-2">
-                <span className="text-sm">{product.name}</span>
-                <span className="font-medium">{product.price.toLocaleString('sr-RS')} RSD</span>
+            {cartItems.map((item) => (
+              <div key={item.product.id} className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">{item.product.name}</span>
+                  <span className="text-xs text-muted-foreground">x{item.quantity}</span>
+                </div>
+                <span className="font-medium">{(item.product.price * item.quantity).toLocaleString('sr-RS')} RSD</span>
               </div>
             ))}
             <div className="border-t border-border pt-2 mt-3">
@@ -170,7 +187,7 @@ const CheckoutForm = ({ selectedProducts, onClose }: CheckoutFormProps) => {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="po_uzecu" id="po_uzecu" />
-                  <Label htmlFor="po_uzecu">Plaćanje po uzećу</Label>
+                  <Label htmlFor="po_uzecu">Plaćanje po uzeću</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="preko_racuna" id="preko_racuna" />

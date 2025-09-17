@@ -3,26 +3,49 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, ShoppingCart, Palette, Leaf, Truck } from "lucide-react";
 import { products, Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
 import ScrollAnimation from "@/components/ScrollAnimation";
+import CheckoutForm from "@/components/CheckoutForm";
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { selectedProducts, cartItems, addToCart, removeFromCart, updateQuantity, getTotalQuantity, getTotalPrice } = useCart();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const product = products.find(p => p.slug === slug);
 
   useEffect(() => {
     // Scroll to top when component loads
     window.scrollTo(0, 0);
-    
+
     if (!product) {
       navigate('/');
     }
   }, [product, navigate, slug]);
+
+  // Listen for cart events from product detail pages
+  useEffect(() => {
+    const handleAddToCart = (event: CustomEvent) => {
+      const { product } = event.detail;
+      setSelectedProducts(prev => {
+        if (prev.find(p => p.id === product.id)) {
+          return prev;
+        }
+        return [...prev, product];
+      });
+    };
+
+    window.addEventListener('addToCart', handleAddToCart as EventListener);
+    return () => {
+      window.removeEventListener('addToCart', handleAddToCart as EventListener);
+    };
+  }, []);
 
   if (!product) {
     return null;
@@ -45,25 +68,89 @@ const ProductDetail = () => {
       alert('Ova boja trenutno nije dostupna.');
       return;
     }
-    
-    // Create a cart event that the parent can listen to
-    const cartEvent = new CustomEvent('addToCart', {
-      detail: { product, color: currentColor }
-    });
-    window.dispatchEvent(cartEvent);
-    
-    // Show success message
-    alert(`${product.name} je dodat u korpu!`);
+
+    // Add to global cart
+    addToCart(product);
+  };
+
+  const handleRemoveFromCart = (productId: number) => {
+    removeFromCart(productId);
+  };
+
+  const handleCheckout = () => {
+    if (selectedProducts.length === 0) return;
+    setIsCheckoutOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Shopping Cart Summary */}
+      {cartItems.length > 0 && (
+        <div className="fixed top-4 right-4 z-[100]">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-lg max-w-sm">
+            <h3 className="font-semibold mb-2">Izabrani proizvodi ({getTotalQuantity()})</h3>
+            <div className="max-h-40 overflow-y-auto space-y-2 mb-4">
+              {cartItems.map((item) => (
+                <div key={item.product.id} className="flex justify-between items-center text-sm">
+                  <span className="truncate flex-1 mr-2">{item.product.name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        -
+                      </Button>
+                      <span className="text-xs w-6 text-center">{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        className="h-6 w-6 p-0"
+                      >
+                        +
+                      </Button>
+                    </div>
+                    <span className="font-medium">{(item.product.price * item.quantity).toLocaleString('sr-RS')} RSD</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeFromCart(item.product.id)}
+                      className="h-6 w-6 p-0"
+                    >
+                      ×
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="border-t pt-2 mb-3">
+              <div className="flex justify-between font-bold">
+                <span>Ukupno:</span>
+                <span className="text-primary">
+                  {getTotalPrice().toLocaleString('sr-RS')} RSD
+                </span>
+              </div>
+            </div>
+            <Button onClick={handleCheckout} className="w-full bg-primary hover:bg-accent">
+              Kupi Sada
+            </Button>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="bg-white border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <Button
             variant="ghost"
-            onClick={() => navigate('/')}
+            onClick={() => {
+              navigate('/');
+              setTimeout(() => {
+                document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -270,6 +357,19 @@ const ProductDetail = () => {
           </div>
         </ScrollAnimation>
       </div>
+
+      {/* Checkout Dialog */}
+      <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Checkout</DialogTitle>
+          </DialogHeader>
+          <CheckoutForm
+            selectedProducts={selectedProducts}
+            onClose={() => setIsCheckoutOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
