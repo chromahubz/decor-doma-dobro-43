@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Palette, Leaf, Truck } from "lucide-react";
 import { products, Product } from "@/data/products";
 import ScrollAnimation from "@/components/ScrollAnimation";
 
@@ -34,6 +34,14 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
+    if (!product.available) {
+      alert('Ovaj proizvod trenutno nije dostupan.');
+      return;
+    }
+    if (!currentColor.available) {
+      alert('Ova boja trenutno nije dostupna.');
+      return;
+    }
     // This would integrate with your cart system
     console.log('Adding to cart:', product, currentColor);
   };
@@ -98,6 +106,11 @@ const ProductDetail = () => {
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   {product.name}
+                  {!product.available && (
+                    <Badge variant="destructive" className="ml-3">
+                      Trenutno nije dostupno
+                    </Badge>
+                  )}
                 </h1>
                 <p className="text-2xl font-bold text-primary mb-4">
                   {product.price.toLocaleString('sr-RS')} RSD
@@ -117,13 +130,21 @@ const ProductDetail = () => {
                     <button
                       key={index}
                       onClick={() => handleColorChange(index)}
-                      className={`px-4 py-2 rounded-lg border transition-colors ${
+                      disabled={!color.available}
+                      className={`px-4 py-2 rounded-lg border transition-colors relative ${
                         selectedColor === index
                           ? 'border-primary bg-primary text-primary-foreground'
                           : 'border-border bg-background hover:border-accent'
+                      } ${
+                        !color.available ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
                       {color.name}
+                      {!color.available && (
+                        <span className="absolute top-0 right-0 text-xs text-muted-foreground">
+                          (nedostupno)
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -170,14 +191,32 @@ const ProductDetail = () => {
             {/* Add to Cart */}
             <ScrollAnimation animationType="fade-up" delay={500}>
               <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border border-border rounded-lg p-4">
-                <Button
-                  onClick={handleAddToCart}
-                  size="lg"
-                  className="w-full bg-primary hover:bg-accent text-primary-foreground flex items-center gap-2"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Dodaj u korpu - {product.price.toLocaleString('sr-RS')} RSD
-                </Button>
+                {!product.available ? (
+                  <Button
+                    disabled
+                    size="lg"
+                    className="w-full flex items-center gap-2"
+                  >
+                    Trenutno nije dostupno
+                  </Button>
+                ) : !currentColor.available ? (
+                  <Button
+                    disabled
+                    size="lg"
+                    className="w-full flex items-center gap-2"
+                  >
+                    Ova boja trenutno nije dostupna
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleAddToCart}
+                    size="lg"
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground flex items-center gap-2"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Dodaj u korpu - {product.price.toLocaleString('sr-RS')} RSD
+                  </Button>
+                )}
               </div>
             </ScrollAnimation>
           </div>
@@ -192,7 +231,7 @@ const ProductDetail = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">🎨</span>
+                      <Palette className="w-6 h-6 text-primary" />
                     </div>
                     <h4 className="font-semibold mb-2">Ručno izrađeno</h4>
                     <p className="text-sm text-muted-foreground">
@@ -201,7 +240,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">🌱</span>
+                      <Leaf className="w-6 h-6 text-primary" />
                     </div>
                     <h4 className="font-semibold mb-2">Ekološki materijali</h4>
                     <p className="text-sm text-muted-foreground">
@@ -210,7 +249,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">🚚</span>
+                      <Truck className="w-6 h-6 text-primary" />
                     </div>
                     <h4 className="font-semibold mb-2">Brza dostava</h4>
                     <p className="text-sm text-muted-foreground">

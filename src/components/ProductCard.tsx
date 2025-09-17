@@ -33,12 +33,21 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <span className="text-xl font-bold text-primary">
             {product.price.toLocaleString('sr-RS')} RSD
           </span>
-          <Button 
-            onClick={() => onAddToCart(product)}
-            className="bg-primary hover:bg-accent text-primary-foreground"
-          >
-            Dodaj u korpu
-          </Button>
+          {!product.available ? (
+            <Button 
+              disabled
+              className="bg-muted text-muted-foreground cursor-not-allowed"
+            >
+              Nije dostupno
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => onAddToCart(product)}
+              className="bg-primary hover:bg-accent text-primary-foreground"
+            >
+              Dodaj u korpu
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

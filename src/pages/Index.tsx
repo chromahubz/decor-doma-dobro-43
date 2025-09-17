@@ -5,6 +5,8 @@ import ProductCard from "@/components/ProductCard";
 import CheckoutForm from "@/components/CheckoutForm";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import { products, Product } from "@/data/products";
+import { Link } from "react-router-dom";
+import { Leaf, Shield, Truck, Heart } from "lucide-react";
 import heroImage from "@/assets/hero-decor.jpg";
 
 const Index = () => {
@@ -75,13 +77,62 @@ const Index = () => {
           </ScrollAnimation>
           
           <ScrollAnimation animationType="fade-up" delay={200}>
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-xl text-muted-foreground leading-relaxed mb-16">
               Naša kolekcija elegantnih vaza, figurina i dekorativnih predmeta za biljke 
               je pažljivo odabrana da unese prirodnu lepotu i harmoniju u vaš životni prostor. 
               Svaki komad je kreiran sa pažnjom prema detaljima i dizajniran da se savršeno 
               uklopi u moderni dom.
             </p>
           </ScrollAnimation>
+
+          {/* Why Choose Our Products Section */}
+          <ScrollAnimation animationType="fade-up" delay={400}>
+            <h3 className="text-3xl font-bold mb-12 text-foreground">
+              Zašto odabrati naše proizvode?
+            </h3>
+          </ScrollAnimation>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <ScrollAnimation animationType="scale-in" delay={500}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Leaf className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold text-lg mb-2">Prirodni Materijali</h4>
+                <p className="text-muted-foreground">Koristimo samo najbolje prirodne materijale za dugotrajnost i kvalitet.</p>
+              </div>
+            </ScrollAnimation>
+            
+            <ScrollAnimation animationType="scale-in" delay={600}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold text-lg mb-2">Garancija Kvaliteta</h4>
+                <p className="text-muted-foreground">Svi proizvodi prolaze rigoroznu kontrolu kvaliteta pre isporuke.</p>
+              </div>
+            </ScrollAnimation>
+            
+            <ScrollAnimation animationType="scale-in" delay={700}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Truck className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold text-lg mb-2">Brza Dostava</h4>
+                <p className="text-muted-foreground">Garantujemo brzu i sigurnu dostavu direktno na vašu adresu.</p>
+              </div>
+            </ScrollAnimation>
+            
+            <ScrollAnimation animationType="scale-in" delay={800}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="font-semibold text-lg mb-2">Ručno Pravljeno</h4>
+                <p className="text-muted-foreground">Svaki proizvod je jedinstveno ručno izrađen sa pažnjom prema detaljima.</p>
+              </div>
+            </ScrollAnimation>
+          </div>
         </div>
       </section>
 
@@ -127,13 +178,19 @@ const Index = () => {
       <section id="products" className="py-20 px-4 bg-secondary/30">
         <div className="max-w-7xl mx-auto">
           <ScrollAnimation animationType="fade-up">
-            <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-foreground">
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-8 text-foreground">
               Naša Kolekcija
             </h2>
           </ScrollAnimation>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, index) => (
+          <ScrollAnimation animationType="fade-up" delay={200}>
+            <p className="text-xl text-muted-foreground text-center mb-8">
+              Otkrijte našu pažljivo odabranu kolekciju proizvoda
+            </p>
+          </ScrollAnimation>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {products.slice(0, 6).map((product, index) => (
               <ScrollAnimation 
                 key={product.id} 
                 animationType="scale-in" 
@@ -146,6 +203,16 @@ const Index = () => {
               </ScrollAnimation>
             ))}
           </div>
+          
+          <ScrollAnimation animationType="fade-up" delay={600}>
+            <div className="text-center">
+              <Link to="/proizvodi">
+                <Button size="lg" className="bg-primary hover:bg-accent text-primary-foreground text-lg px-8 py-4">
+                  VIDI SVE
+                </Button>
+              </Link>
+            </div>
+          </ScrollAnimation>
         </div>
       </section>
 
