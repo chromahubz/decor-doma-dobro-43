@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import ProductCard from "@/components/ProductCard";
 import CheckoutForm from "@/components/CheckoutForm";
 import ScrollAnimation from "@/components/ScrollAnimation";
+import Layout from "@/components/Layout";
 import { products, Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
@@ -37,25 +38,26 @@ const AllProducts = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+    <Layout>
+      <div className="bg-background">
+      {/* Page Header */}
+      <div className="bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center gap-4">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft size={20} />
               <span>Nazad na početnu</span>
             </Link>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-foreground">Svi Proizvodi</h1>
+              <h1 className="text-3xl font-bold text-foreground">Svi Proizvodi</h1>
               <p className="text-muted-foreground">Kompletna kolekcija naših proizvoda</p>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Shopping Cart Summary */}
       {cartItems.length > 0 && (
@@ -144,7 +146,8 @@ const AllProducts = () => {
           />
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

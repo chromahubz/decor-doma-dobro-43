@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import ProductCard from "@/components/ProductCard";
 import CheckoutForm from "@/components/CheckoutForm";
 import ScrollAnimation from "@/components/ScrollAnimation";
+import Layout from "@/components/Layout";
 import { products, Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
@@ -41,7 +42,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <Layout>
+      <div>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div 
@@ -271,32 +273,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-foreground text-background py-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-bold mb-4">Dekor Kuća</h3>
-          <p className="text-lg mb-6">
-            Dekoracija koja donosi prirodu u vaš dom
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
-            <div>
-              <h4 className="font-semibold mb-2">Kontakt</h4>
-              <p>Email: info@dekorkuca.com</p>
-              <p>Telefon: +381 11 123 4567</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-2">Adresa</h4>
-              <p>Knez Mihailova 15</p>
-              <p>11000 Beograd, Srbija</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-2">Radno vreme</h4>
-              <p>Pon - Pet: 09:00 - 18:00</p>
-              <p>Sub: 10:00 - 16:00</p>
-            </div>
-          </div>
-        </div>
-      </footer>
 
       {/* Checkout Dialog */}
       <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
@@ -310,7 +286,8 @@ const Index = () => {
           />
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

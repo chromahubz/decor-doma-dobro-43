@@ -9,6 +9,7 @@ import { products, Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import CheckoutForm from "@/components/CheckoutForm";
+import Layout from "@/components/Layout";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -83,7 +84,8 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <Layout>
+      <div className="bg-background">
       {/* Shopping Cart Summary */}
       {cartItems.length > 0 && (
         <div className="fixed top-4 right-4 z-[100]">
@@ -140,8 +142,8 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
-      {/* Header */}
-      <div className="bg-white border-b border-border sticky top-0 z-50">
+      {/* Back Button */}
+      <div className="bg-white border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <Button
             variant="ghost"
@@ -370,7 +372,8 @@ const ProductDetail = () => {
           />
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

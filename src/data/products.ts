@@ -187,7 +187,7 @@ export const products: Product[] = [
     name: "Japanska Zen Bašta",
     slug: "japanska-zen-basta",
     price: 6700,
-    mainImage: zen1,
+    mainImage: zen7,
     description: "Miniaturna zen bašta za meditaciju i opuštanje duha. Savršen poklonački set za ljubitelje istočne filozofije.",
     longDescription: "Inspirisana tradicionalnim japanskim zen baštama, ova miniaturna verzija donosi mir i harmoniju u vaš lični prostor. Set uključuje pažljivo odabrane kamenje, pesak specijalne granulacije i drveni greben za stvaranje uzoraka. Zen bašta je odličan alat za meditaciju, smanjenje stresa i fokusiranje uma. Svaki element je odabran prema tradicionalnim principima feng shui-ja i zen filozofije.",
     colors: [
