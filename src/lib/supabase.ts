@@ -3,11 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+let supabase: any = null
+
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey)
+} else {
+  console.warn('Supabase environment variables not found. Some features may not work.')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export { supabase }
 
 // Giveaway entry interface
 export interface GiveawayEntry {
@@ -19,6 +23,10 @@ export interface GiveawayEntry {
 
 // Function to submit giveaway entry
 export async function submitGiveawayEntry(email: string, ipAddress?: string) {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized. Please check environment variables.')
+  }
+
   const { data, error } = await supabase
     .from('giveaway_entries')
     .insert([
@@ -39,6 +47,10 @@ export async function submitGiveawayEntry(email: string, ipAddress?: string) {
 
 // Function to check if email already exists
 export async function checkEmailExists(email: string) {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized. Please check environment variables.')
+  }
+
   const { data, error } = await supabase
     .from('giveaway_entries')
     .select('email')
